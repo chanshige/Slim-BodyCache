@@ -1,4 +1,8 @@
 # Slim Framework Response Body Cache
+
+[![Packagist](https://img.shields.io/badge/packagist-v0.0.1-blue.svg)](https://packagist.org/packages/chanshige/slim-bodycache)
+[![Build Status](https://travis-ci.org/chanshige/Slim-BodyCache.svg?branch=master)](https://travis-ci.org/chanshige/Slim-BodyCache)
+
   
 A body(message response) cache library for the Slim Framework. It internally uses Symfony/Cache.  
   
