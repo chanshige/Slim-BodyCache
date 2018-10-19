@@ -51,7 +51,7 @@ class BodyCacheTest extends TestCase
         $hasCache = null;
         // callable
         $next = function (Request $request, Response $response) use (&$hasCache) {
-            $hasCache = $request->getAttribute('has_cache');
+            $hasCache = $request->getAttribute('has_body_cache');
             return $response;
         };
 

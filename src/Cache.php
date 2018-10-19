@@ -24,7 +24,7 @@ final class Cache
      *
      * @var string
      */
-    private $hasCacheName = 'has_cache';
+    private $hasCacheName = 'has_body_cache';
 
     /**
      * Cache constructor.
@@ -37,6 +37,8 @@ final class Cache
     }
 
     /**
+     * Invoke.
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
      * @param callable               $next
