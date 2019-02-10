@@ -68,6 +68,16 @@ final class Cache
     }
 
     /**
+     * clean the entire cache's keys.
+     *
+     * @return bool
+     */
+    public function clear(): bool
+    {
+        return $this->cache->clear();
+    }
+
+    /**
      * @param ServerRequestInterface $request
      * @return string
      */

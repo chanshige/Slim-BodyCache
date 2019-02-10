@@ -31,7 +31,6 @@ class BodyCacheTest extends TestCase
      */
     public static function tearDownAfterClass()
     {
-        self::$fileCache->clear();
         exec('rm -rf ' . TEST_DIR . 'test_cache');
     }
 
@@ -39,32 +38,39 @@ class BodyCacheTest extends TestCase
      * @param string $method
      * @param string $path
      * @param string $message
-     * @param bool   $expectedCache
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param bool   $hasCache
      * @dataProvider requestProvider
      */
-    public function testCache($method, $path, $message, $expectedCache)
+    public function testCache(string $method, string $path, string $message, bool $hasCache)
     {
         $this->initialize($method, $path);
-        $middleware = new Cache(self::$fileCache);
+        $next = function (Request $request, Response $response) use ($message, $hasCache) {
+            $hasBodyCache = $request->getAttribute('has_body_cache');
+            if ($hasBodyCache) {
+                $this->assertTrue($hasBodyCache);
+                $this->assertSame($hasCache, $hasBodyCache);
+                $this->assertEquals($message, (string)$response->getBody());
+                return $response;
+            }
 
-        $hasCache = null;
-        // callable
-        $next = function (Request $request, Response $response) use (&$hasCache) {
-            $hasCache = $request->getAttribute('has_body_cache');
-            return $response;
+            $this->assertFalse($hasBodyCache);
+            $this->assertSame($hasCache, $hasBodyCache);
+
+            $body = $response->getBody();
+            $body->write($message);
+
+            return $response->withBody($body);
         };
 
-        if (strlen($message) > 0 && !$expectedCache) {
-            $body = $this->response->getBody();
-            $body->write($message);
-            $this->response->withBody($body);
-        }
+        (new Cache(self::$fileCache))($this->request, $this->response, $next);
+    }
 
-        $middleware($this->request, $this->response, $next);
-
-        $this->assertSame($expectedCache, $hasCache);
-        $this->assertSame($message, (string)$this->response->getBody());
+    /**
+     * @void
+     */
+    public function testClearCache()
+    {
+        $this->assertTrue((new Cache(self::$fileCache))->clear());
     }
 
     /**
@@ -78,25 +84,25 @@ class BodyCacheTest extends TestCase
             [
                 'GET',
                 '/foo',
-                'Hello World!',
+                'Foo Body!',
                 false,
             ],
             [
                 'GET',
                 '/var',
-                'Hello!!',
+                'Var Body!',
                 false,
             ],
             [
                 'GET',
                 '/foo',
-                'Hello World!',
+                'Foo Body!',
                 true,
             ],
             [
                 'GET',
                 '/var',
-                'Hello!!',
+                'Var Body!',
                 true,
             ]
         ];
