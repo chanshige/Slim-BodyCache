@@ -64,3 +64,11 @@ $app->get('/foo', function (\Slim\Http\Request $request, \Slim\Http\Response $re
 
 $app->run();
 ```
+
+## Contributing
+
+We welcome bug reports, feature requests and pull requests through Slim-BodyCache Github issue tracker.
+
+## License
+
+The Slim-BodyCache is licensed under the MIT license.
